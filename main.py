@@ -1,11 +1,15 @@
 # This is a sample Python script.
+from demo_MLP import demo_mlp
+from plot_30_images_random import plot_30_images_randomly
+from plot_5images import plot_5_images_3rows
 
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-from plot_5images import *
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    plot_5_images_3rows();
+    # plot_5_images_3rows()
+    # plot_30_images_randomly()
+    demo_mlp()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
