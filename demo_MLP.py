@@ -8,7 +8,7 @@ def demo_mlp():
     image_size = (32, 768)
     batch_size = 32
     num_classes = 3
-    epochs = 10
+    epochs = 20
     train_ds = tf.keras.preprocessing.image_dataset_from_directory(
         'TTW(dataset)\\train(576)',
         image_size=image_size,
@@ -33,13 +33,12 @@ def demo_mlp():
     train_ds = train_ds.cache().shuffle(1000).prefetch(buffer_size=autotune)
     val_ds = val_ds.cache().prefetch(buffer_size=autotune)
 
-    normalization_layer = keras.layers.Rescaling(1. / 255)
-    normalized_train_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
-    normalized_val_ds = val_ds.map(lambda x, y: (normalization_layer(x), y))
+    normalized_train_ds = train_ds
+    normalized_val_ds = val_ds
 
     model = keras.Sequential([
         keras.layers.Flatten(),
-        keras.layers.Dense(num_classes, activation='relu')
+        keras.layers.Dense(num_classes, activation='softmax')
     ])
 
     model.compile(optimizer='adam',
