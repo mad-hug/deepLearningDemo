@@ -1,10 +1,15 @@
+import os
+
 import tensorflow as tf
 from tensorflow import keras
 import time
 import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import numpy as np
 
 
-def demo_mlp():
+def demo_cnn():
     image_size = (32, 768)
     batch_size = 32
     num_classes = 3
@@ -38,6 +43,13 @@ def demo_mlp():
     normalized_val_ds = val_ds.map(lambda x, y: (normalization_layer(x), y))
 
     model = keras.Sequential([
+        keras.layers.experimental.preprocessing.Rescaling(1. / 255),
+        keras.layers.Conv2D(32, 3, activation='relu'),
+        keras.layers.MaxPooling2D(),
+        keras.layers.Conv2D(64, 3, activation='relu'),
+        keras.layers.MaxPooling2D(),
+        keras.layers.Conv2D(128, 3, activation='relu'),
+        keras.layers.MaxPooling2D(),
         keras.layers.Flatten(),
         keras.layers.Dense(num_classes, activation='relu')
     ])
@@ -75,3 +87,16 @@ def demo_mlp():
 
     loss, accuracy = model.evaluate(normalized_val_ds)
     print("Validation accuracy: {:.2f}%".format(accuracy * 100))
+
+    y_pared_prob = model.predict(normalized_val_ds)
+    y_pared = np.argmax(y_pared_prob, axis=1)
+    y_true = np.concatenate([y for x, y in val_ds], axis=0)
+    accuracy = np.mean(y_pared == y_true) * 100
+    print("Test accuracy: {:.2f}%".format(accuracy))
+    cm = confusion_matrix(y_true, y_pared)
+    plt.figure(figsize=(6, 6))
+    class_names = os.listdir('TTW(dataset)\\train(576)')
+    sns.heatmap(cm, annot=True, fmt='g', cmap='Blues', xticklabels=class_names, yticklabels=class_names)
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.show()
